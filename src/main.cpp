@@ -1,93 +1,46 @@
-#include <iostream>
-#include <cpprest/http_client.h>
+#include <exception>
 
-#include <iostream>
+
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <cpprest/uri.h>
 #include <cpprest/json.h>
-#include <boost/program_options.hpp>
-#include <fstream>
-#include <iostream>
-#include <exception>
+
+
+
+#include <vector>
+
+#include "uuid.h"
+#include "net_tools.h"
+#include "configuration.h"
+
 using namespace utility;
 using namespace web;
 using namespace web::http;
 using namespace web::http::client;
 using namespace concurrency::streams;
-namespace po = boost::program_options;
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
 
 
 int main(int argc, char *argv[])
 {
 
-    // Get the Linux home direcory config default
-    const char *homedir;
-    if ((homedir = getenv("HOME")) == NULL)
-    {
-        homedir = getpwuid(getuid())->pw_dir;
-    }
-    std::string defaultConfigPath;
-    defaultConfigPath.append(homedir);
-    defaultConfigPath.append("/.config/piapf/config");
-    std::cout << defaultConfigPath << '\n';
-    // Read the main arguments into the vm
-    po::variables_map vm;
-    // Create options description for file
-    po::options_description fileOptions{"File"};
-    fileOptions.add_options()("age", po::value<int>(), "Age");
+    Configuration conf;
 
-    // Try to open and read the default config dir
-    std::ifstream ifs{defaultConfigPath.c_str()};
-    try
-    {
-        if (ifs)
-            po::store(parse_config_file(ifs, fileOptions), vm);
-    }
-    catch (const std::exception &ex)
-    {
-        std::cerr << "Invalid default configuration file: "  << defaultConfigPath << ex.what() << '\n';
-        vm.clear();
-    }
-    try
-    {
-        po::options_description generalOptions{"General"};
-        generalOptions.add_options()
-        ("help,h", "Help screen") // Help option
-        ("config,c", po::value<std::string>(), "Config file"); // Config file
-
-        po::store(parse_command_line(argc, argv, generalOptions), vm);
-
-        // If the command line contain the file read the file and if exist override all the configurations
-        if (vm.count("config"))
-        {
-            std::ifstream ifs{vm["config"].as<std::string>().c_str()};
-            if (ifs)
-                po::store(parse_config_file(ifs, fileOptions), vm);
-            else
-                throw std::invalid_argument("Config file can't be open");
-        }
-        // Commit the vm
-        notify(vm);
-
-        if (vm.count("help"))
-            std::cout << generalOptions << '\n';
-        else if (vm.count("age"))
-            std::cout << "Your age is: " << vm["age"].as<int>() << '\n';
-    }
-    catch (const std::exception &ex)
-    {
-        std::cerr << ex.what() << '\n';
-    }
-
-
+    // Parse args and overrid the config directory if -c option exist
+    int parse_result = conf.parse(argc, argv);
+    if(parse_result!=1)
+        return parse_result;
 
 
     std::cout << "PIA Service" << std::endl;
+    // Get the ip from the vpn interface
+    std::string vpn_local_ip = net_tools::get_ip_address(conf.get_vpn_iface());
+    std::string private_internet_access_ip = net_tools::dns_lookup("privateinternetaccess.com")[0]; // TODO CHEK if empty
+    std::string client_id = UUID::generate_uuid();
+    std::cout << vpn_local_ip << std::endl;
+    std::cout << private_internet_access_ip << std::endl;
+    std::cout << client_id << std::endl;
+
     http_client_config config;
     config.set_validate_certificates(false);
     // Make a GET request.
@@ -108,7 +61,7 @@ int main(int argc, char *argv[])
     // Parse the user details.
     .then([](json::value jsonObject)
     {
-        std::cout << jsonObject[U("ip")].as_string() << std::endl;
+        std::cout << "vpn external ip: "<< jsonObject[U("ip")].as_string() << std::endl;
     });
     // Wait for the concurrent tasks to finish.
     try
@@ -119,6 +72,12 @@ int main(int argc, char *argv[])
     {
         printf("Error exception:%s\n", e.what());
     }
+
+
+    // TODO - auth token     save the token on sqlite
+    // TODO - get signature
+    // TODO - bind port
+
 
     return 0;
 }

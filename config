@@ -1,0 +1,5 @@
+vpn.iface=eth0
+username=sample
+password=sample
+deluged.username=test
+deluged.password=password
