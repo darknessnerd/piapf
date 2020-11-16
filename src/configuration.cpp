@@ -108,6 +108,16 @@ int Configuration::parse(int argc, char *argv[])
     return 1;
 }
 
+string Configuration::get_pia_username()
+{
+    return this->vm["username"].as<std::string>();
+}
+
+string Configuration::get_pia_password()
+{
+    return this->vm["password"].as<std::string>();
+}
+
 string Configuration::get_vpn_iface()
 {
     return this->vm["vpn.iface"].as<std::string>();

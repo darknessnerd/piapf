@@ -12,6 +12,8 @@ public:
     int parse(int argc, char *argv[]);
     std::string get_default_config_path();
     std::string get_vpn_iface();
+    std::string get_pia_username();
+    std::string get_pia_password();
 
 protected:
 

@@ -14,6 +14,7 @@ set(SOURCES
     src/uuid.cpp
     src/net_tools.cpp
     src/configuration.cpp
+    src/base64.cpp
 )
 
 # Add an executable with the above sources
