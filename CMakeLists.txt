@@ -15,6 +15,7 @@ set(SOURCES
     src/net_tools.cpp
     src/configuration.cpp
     src/base64.cpp
+    src/pia_client.cpp
 )
 
 # Add an executable with the above sources
