@@ -4,6 +4,13 @@ set(CMAKE_CXX_STANDARD 14)
 # Set the project name
 project(piapf)
 
+# set a project version
+set (piapf_VERSION_MAJOR 0)
+set (piapf_VERSION_MINOR 2)
+set (piapf_VERSION_PATCH 2)
+set (piapf_VERSION "${piapf_VERSION_MAJOR}.${piapf_VERSION_MINOR}.${piapf_VERSION_PATCH}")
+
+
 # Included the conan build information
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
@@ -34,3 +41,34 @@ target_link_libraries(${PROJECT_NAME}
         CONAN_PKG::sqlite3
 		CONAN_PKG::cpprestsdk
 )
+
+
+############################################################
+# Install
+############################################################
+
+# Binaries
+install (TARGETS ${PROJECT_NAME}
+    DESTINATION bin)
+
+
+# Config
+install (FILES config
+    DESTINATION etc/${PROJECT_NAME})
+
+############################################################
+# Create DEB
+############################################################
+
+# Tell CPack to generate a .deb package
+set(CPACK_GENERATOR "DEB")
+
+# Set a Package Maintainer.
+# This is required
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Brunino criniti")
+
+# Set a Package Version
+set(CPACK_PACKAGE_VERSION ${deb_example_VERSION})
+
+# Include CPack
+include(CPack)

@@ -46,3 +46,19 @@ conan .. --build=missing
 cmake ..
 make
 ```
+
+
+# Build the debian package 
+
+```
+
+mkdir build
+cd build
+
+conan .. --build=missing
+cmake ..
+make
+make package
+```
+
+
