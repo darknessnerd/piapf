@@ -8,7 +8,7 @@
 
 #include "base64.h"
 #include "pia_client.h"
-
+#include "shell.h"
 using namespace utility;
 using namespace web;
 using namespace web::http;
@@ -16,6 +16,9 @@ using namespace web::http::client;
 using namespace concurrency::streams;
 using std::string;
 using std::ostringstream;
+using shell::cmd;
+#include <regex>
+
 
 PiaClient::PiaClient():pia_host("https://www.privateinternetaccess.com")
 {
@@ -23,7 +26,11 @@ PiaClient::PiaClient():pia_host("https://www.privateinternetaccess.com")
     config.set_validate_certificates(false);
     ostringstream oss;
     // the ip it taken from traceroute -m 1 privateinternetaccess.com | tail -n 1 | awk '{print $2}'
-    oss << "https://" << "10.17.18.1" << ":19999";
+    std::string ip = cmd{"traceroute -m 1 privateinternetaccess.com | tail -n 1 | awk '{print $2}'"}.str();
+    ip = std::regex_replace(ip, std::regex("^\\s+"), std::string(""));
+    ip = std::regex_replace(ip, std::regex("\\s+$"), std::string(""));
+    std::cout << "privateinternetaccess.com: " << ip;
+    oss << "https://" << ip << ":19999";
     this->pia_request_uri = oss.str();
 }
 

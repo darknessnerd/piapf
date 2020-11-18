@@ -16,6 +16,8 @@ set(SOURCES
     src/configuration.cpp
     src/base64.cpp
     src/pia_client.cpp
+    src/shell.cpp
+    src/subprocess.cpp
 )
 
 # Add an executable with the above sources
