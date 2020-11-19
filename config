@@ -1,5 +1,8 @@
 vpn.iface=eth0
-username=sample
-password=sample
-deluged.username=test
+username=username
+password=password
+deluged.username=deluge
 deluged.password=password
+deluged.host=ip
+deluged.port=58846
+check.frequency=15

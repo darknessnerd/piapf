@@ -23,13 +23,14 @@ Configuration::Configuration():fileOptions("config")
     this->default_config_path= defaultConfigPath;
 
     // Define all the options for the config file
-    fileOptions.add_options()("username", po::value<std::string>(), "Private internet access username");
-    fileOptions.add_options()("password", po::value<std::string>(), "Private internet access password");
-    fileOptions.add_options()("vpn.iface", po::value<std::string>(), "Vpn interface");
-    fileOptions.add_options()("deluged.username", po::value<std::string>(), "Deluge daemon username");
-    fileOptions.add_options()("deluged.password", po::value<std::string>(), "Deluge daemon password");
-    fileOptions.add_options()("deluged.host", po::value<std::string>(), "Deluge daemon host");
-    fileOptions.add_options()("deluged.port", po::value<std::string>(), "Deluge daemon port");
+    fileOptions.add_options()("username", po::value<std::string>()->required(), "Private internet access username");
+    fileOptions.add_options()("password", po::value<std::string>()->required(), "Private internet access password");
+    fileOptions.add_options()("vpn.iface", po::value<std::string>()->required(), "Vpn interface");
+    fileOptions.add_options()("deluged.username", po::value<std::string>()->required(), "Deluge daemon username");
+    fileOptions.add_options()("deluged.password", po::value<std::string>()->required(), "Deluge daemon password");
+    fileOptions.add_options()("deluged.host", po::value<std::string>()->required(), "Deluge daemon host");
+    fileOptions.add_options()("deluged.port", po::value<int>()->required(), "Deluge daemon port");
+    fileOptions.add_options()("check.frequency", po::value<int>()->required(), "Check the port binding every x minutes");
 
 
 
@@ -97,6 +98,14 @@ int Configuration::parse(int argc, char *argv[])
             std::cout << "deluged.password: ***" << '\n';
         else
             throw std::invalid_argument("invalid_argument: deluged.password");
+        if (vm.count("deluged.port"))
+            std::cout << "deluged.port: " << this->vm["deluged.port"].as<int>() << '\n';
+        else
+            throw std::invalid_argument("invalid_argument: deluged.port");
+        if (vm.count("check.frequency"))
+            std::cout << "check.frequency " << this->vm["check.frequency"].as<int>() << '\n';
+        else
+            throw std::invalid_argument("invalid_argument: check.frequency");
 
         std::cout << "######################################## End configuration    ##########################" << std::endl;
     }
@@ -108,22 +117,47 @@ int Configuration::parse(int argc, char *argv[])
     return 1;
 }
 
-string Configuration::get_pia_username()
+string Configuration::get_pia_username() const
 {
-    return this->vm["username"].as<std::string>();
+    return this->vm["username"].as<string>();
 }
 
-string Configuration::get_pia_password()
+string Configuration::get_pia_password() const
 {
-    return this->vm["password"].as<std::string>();
+    return this->vm["password"].as<string>();
 }
 
-string Configuration::get_vpn_iface()
+int Configuration::get_check_frequency() const
 {
-    return this->vm["vpn.iface"].as<std::string>();
+    return this->vm["check.frequency"].as<int>();
 }
 
-string Configuration::get_default_config_path()
+string Configuration::get_vpn_iface() const
+{
+    return this->vm["vpn.iface"].as<string>();
+}
+
+string Configuration::get_deulged_host() const
+{
+    return this->vm["deluged.host"].as<string>();
+}
+
+string Configuration::get_deluged_username() const
+{
+    return this->vm["deluged.username"].as<string>();
+}
+
+string Configuration::get_deluged_password() const
+{
+    return this->vm["deluged.password"].as<string>();
+}
+
+int Configuration::get_deluged_port() const
+{
+    return this->vm["deluged.port"].as<int>();
+}
+
+string Configuration::get_default_config_path() const
 {
     return this->default_config_path;
 }

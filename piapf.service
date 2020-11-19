@@ -1,0 +1,11 @@
+[Unit]
+Description=Piapf
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c '/usr/bin/piapf -c /usr/etc/piapf/config 2>&1 > /var/log/piapf.log'
+Restart=always
+RestartSec=30
+[Install]
+WantedBy=multi-user.target

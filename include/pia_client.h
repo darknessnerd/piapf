@@ -12,9 +12,13 @@ class PiaClient
         PiaClient();
         virtual ~PiaClient();
         std::string get_public_ip();
-        bool auth(std::string username, std::string password);
+        bool auth(const std::string &username, const std::string &password);
         bool generate_signature();
         bool bind_port();
+        int get_port() const;
+        bool isExpired();
+        std::string currentISO8601TimeUTC();
+        long stringToTimestamp(const std::string &time);
     protected:
 
     private:
@@ -27,6 +31,7 @@ class PiaClient
         std::string pia_request_uri;
 
         void process_request(const pplx::task<web::http::http_response> &task,std::function<void(const web::json::value &jsonObject)> handler_func);
+
 
 
 };

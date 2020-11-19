@@ -3,8 +3,10 @@
 #include <cpprest/filestream.h>
 #include <cpprest/uri.h>
 #include <cpprest/json.h>
-
 #include <string>
+
+#include <chrono>
+#include <iomanip> // put time
 
 #include "base64.h"
 #include "pia_client.h"
@@ -19,6 +21,58 @@ using std::ostringstream;
 using shell::cmd;
 #include <regex>
 
+/**
+ * Generate a UTC ISO8601-formatted timestamp
+ * and return as std::string
+ */
+string PiaClient::currentISO8601TimeUTC() {
+  auto now = std::chrono::system_clock::now();
+  auto itt = std::chrono::system_clock::to_time_t(now);
+  std::ostringstream ss;
+  ss << std::put_time(gmtime(&itt), "%FT%TZ");
+  return ss.str();
+}
+
+/**
+ * from  ISO8601-formatted std::string
+ * return a linux timestamp
+ */
+long PiaClient::stringToTimestamp(const std::string &time) {
+  std::tm tm = {};
+  std::stringstream ss(time);
+  ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+  std::chrono::system_clock::time_point tp =  std::chrono::system_clock::from_time_t(std::mktime(&tm));
+  return std::chrono::duration_cast<std::chrono::seconds>( tp.time_since_epoch() ).count();
+}
+int PiaClient::get_port() const
+{
+    json::value payload = json::value::parse(base64::base64_decode(this->payload));
+    return payload[U("port")].as_integer();
+}
+bool PiaClient::isExpired()
+{
+    if(this->token.empty() || this->payload.empty() || this->signature.empty())
+    {
+        return true;
+    }
+    json::value payload = json::value::parse(base64::base64_decode(this->payload));
+
+    std::string expire_at = payload[U("expires_at")].as_string();
+    std::cout << "expire at: " << expire_at << std::endl;
+    int port = payload[U("port")].as_integer();
+    std::cout << "binding port: " << port << std::endl;
+
+    long now = std::chrono::duration_cast<std::chrono::seconds>( std::chrono::system_clock::now().time_since_epoch()).count();
+    long expire_at_timestamp = this->stringToTimestamp(expire_at);
+    std::cout << "now: " << now << "expire at: " << expire_at_timestamp << std::endl;
+    std::cout << "delta time  = " << expire_at_timestamp - now << std::endl;
+    // 7 days before the expire update the token
+    if(expire_at_timestamp - now < 604800 )
+    {
+        return true;
+    }
+    return false;
+}
 
 PiaClient::PiaClient():pia_host("https://www.privateinternetaccess.com")
 {
@@ -100,8 +154,6 @@ bool PiaClient::generate_signature()
                                        .append_query(U("token"), token).to_string(), U("application/json")),
                               [&](json::value jsonObject)
         {
-            std::cout << "sig: "<< jsonObject.serialize() << std::endl;
-            std::cout <<  base64::base64_decode(jsonObject[U("payload")].as_string()) << std::endl;
             payload = jsonObject[U("payload")].as_string();
             signature = jsonObject[U("signature")].as_string();
         }
@@ -118,7 +170,7 @@ bool PiaClient::generate_signature()
 
 }
 
-bool PiaClient::auth(string username, string password)
+bool PiaClient::auth(const string &username, const string &password)
 {
     std::string token;
     // Make a POST request.

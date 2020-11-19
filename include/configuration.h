@@ -10,10 +10,15 @@ public:
     Configuration();
     virtual ~Configuration();
     int parse(int argc, char *argv[]);
-    std::string get_default_config_path();
-    std::string get_vpn_iface();
-    std::string get_pia_username();
-    std::string get_pia_password();
+    std::string get_default_config_path() const;
+    std::string get_vpn_iface() const;
+    std::string get_pia_username() const;
+    std::string get_pia_password() const;
+    std::string get_deulged_host() const;
+    std::string get_deluged_username() const;
+    std::string get_deluged_password() const;
+    int get_deluged_port() const;
+    int get_check_frequency() const;
 
 protected:
 

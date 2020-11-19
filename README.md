@@ -62,3 +62,20 @@ make package
 ```
 
 
+# Install the debian package 
+
+apt-get install ./piapf-0.1.1-Linux.deb
+
+
+change the configuration file 
+
+/usr/etc/piapf/config
+
+systemctl daemon-reload
+
+start: 
+
+systemctl start piapf.service
+
+The logs are located in  /var/log/piapf.log
+

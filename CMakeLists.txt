@@ -9,7 +9,8 @@ set (piapf_VERSION_MAJOR 0)
 set (piapf_VERSION_MINOR 2)
 set (piapf_VERSION_PATCH 2)
 set (piapf_VERSION "${piapf_VERSION_MAJOR}.${piapf_VERSION_MINOR}.${piapf_VERSION_PATCH}")
-
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 # Included the conan build information
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -40,13 +41,15 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         CONAN_PKG::sqlite3
 		CONAN_PKG::cpprestsdk
+		Threads::Threads
 )
 
 
 ############################################################
 # Install
 ############################################################
-
+# Directory with systemd unit files
+set (SYSTEMD_UNIT_DIR "/usr/lib/systemd/system/")
 # Binaries
 install (TARGETS ${PROJECT_NAME}
     DESTINATION bin)
@@ -55,6 +58,8 @@ install (TARGETS ${PROJECT_NAME}
 # Config
 install (FILES config
     DESTINATION etc/${PROJECT_NAME})
+install (FILES piapf.service
+    DESTINATION ${SYSTEMD_UNIT_DIR})
 
 ############################################################
 # Create DEB
