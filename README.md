@@ -1,6 +1,8 @@
 # piapf
 Pia port forwarding automation
 
+[![Build Status](https://travis-ci.com/darknessnerd/piapf.svg?branch=main)](https://travis-ci.com/darknessnerd/piapf)
+
 # Prerequisite
 
 ## Windows
@@ -55,7 +57,7 @@ make
 mkdir build
 cd build
 
-conan .. --build=missing
+conan install .. --build=missing
 cmake ..
 make
 make package
@@ -79,3 +81,9 @@ systemctl start piapf.service
 
 The logs are located in  /var/log/piapf.log
 
+## TODO 
+
+[] tests
+[] Logging 
+[] check errors
+[] release package 
