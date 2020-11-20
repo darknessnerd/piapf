@@ -17,12 +17,12 @@ using std::string;
 using std::cout;
 using std::endl;
 
-namespace net_tools {
+namespace net_tools
+{
 
-    std::string get_ip_address(const std::string &iface)
+std::string get_ip_address(const std::string &iface)
 {
     std::string ipAddress="Unable to get IP Address";
-
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
     int success = 0;
@@ -42,7 +42,6 @@ namespace net_tools {
                     ipAddress=inet_ntoa(((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr);
 
                 }
-
             }
             temp_addr = temp_addr->ifa_next;
         }
@@ -66,19 +65,24 @@ vector<string> dns_lookup(const string &host_name, int ipv)
     hints.ai_family = ai_family;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((status = getaddrinfo(host_name.c_str(), NULL, &hints, &res)) != 0) {
+    if ((status = getaddrinfo(host_name.c_str(), NULL, &hints, &res)) != 0)
+    {
         //cerr << "getaddrinfo: "<< gai_strerror(status) << endl;
         return output;
     }
 
     //cout << "DNS Lookup: " << host_name << " ipv:" << ipv << endl;
 
-    for(p = res;p != NULL; p = p->ai_next) {
+    for(p = res; p != NULL; p = p->ai_next)
+    {
         void *addr;
-        if (p->ai_family == AF_INET) { // IPv4
+        if (p->ai_family == AF_INET)   // IPv4
+        {
             struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
             addr = &(ipv4->sin_addr);
-        } else { // IPv6
+        }
+        else     // IPv6
+        {
             struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
             addr = &(ipv6->sin6_addr);
         }

@@ -106,7 +106,6 @@ int Configuration::parse(int argc, char *argv[])
             std::cout << "check.frequency " << this->vm["check.frequency"].as<int>() << '\n';
         else
             throw std::invalid_argument("invalid_argument: check.frequency");
-
         std::cout << "######################################## End configuration    ##########################" << std::endl;
     }
     catch (const std::exception &ex)
@@ -164,6 +163,5 @@ string Configuration::get_default_config_path() const
 
 Configuration::~Configuration()
 {
-    std::cout << "Configuration dctor" << '\n';
     this->vm.clear();
 }

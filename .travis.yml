@@ -14,3 +14,12 @@ script:
 - cmake .. -G "Unix Makefiles"
 - cmake --build .
 - make package ..
+deploy:
+  overwrite: true
+  provider: releases
+  file: "/home/travis/build/darknessnerd/piapf/build/piapf-0.1.1-Linux.deb"
+  skip_cleanup: true
+  on:
+    tags: true
+  api_key:
+    secure: ox1Iv1kyrRMPNyfQcGn20yxswx+X0gW0U4Q65x2q7c3+JvVOVXB1nK54wwAPE+OA3uLFp+eWKeh+ri951xor4TZWnPq+Xrze4LIaH6mnwfLC3+PFktD3+QyDDlVyRsvVR4m0Yyd/99hEMnmm/qK1gab6abksB2UcvO4Vyn6LbHH7Apmy6r50+1ZVdmQEZkfTr5pes5iYYHoaZwrIAgUGzNH/ro0F12Ksttb4ZJ4ptDYTVGVV1qIbUJOcwvtX9byzNbog0rYF/qexlCVIqE0Gw/B8a1iCubpjgSyOVv6Z3wZ0nTi8lZi2jKX/JAYMYaFzTYczw8R1Sq98JuXRSAdzfga3zFnbtfFjLEw69XoAzdml+DUXfxhCDhFa/lK9WxnmZJmx93mvaCFb2JP2YcaZg3lShNQRdiyx8GSMKurp0grSdDqgqBOCzuLGzaM3SEXVYSflOAnMWDNv1t8bj3UVKALNV5CLjTCIksL3xpmWNUGKa4mhvB5vDW6pbgfTw2w8Cv5MjdVWKYVyxGsmRQbsBRTwH7cs2P/KJJLeK57tVkGUs0qdpkMxndmtt6ShtpgiLVNyvzK1nWEkmJhV4kG4WZ0AQsVBIUa+NviPuOJTijyDfRmDIjvc5X2vkkeZy0pfBnHOmejRGqiyPiWJNw61hP6SR0Wm8HzNpB9Wf1w8H7g=
