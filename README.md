@@ -1,5 +1,5 @@
 # piapf
-Pia port forwarding automation
+Private internet access  port forwarding debian service 
 
 [![Build Status](https://travis-ci.com/darknessnerd/piapf.svg?branch=main)](https://travis-ci.com/darknessnerd/piapf)
 
